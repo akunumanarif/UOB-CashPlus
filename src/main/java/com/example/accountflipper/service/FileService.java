@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileService {
     boolean hasCSVFormat(MultipartFile file);
 
-    void processAndSaveData(MultipartFile file);
+    void processAndSaveData(MultipartFile inputFile, MultipartFile refFile);
 }

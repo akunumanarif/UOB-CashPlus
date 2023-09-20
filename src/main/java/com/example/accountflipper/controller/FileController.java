@@ -20,10 +20,10 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file")MultipartFile file) {
-        if(fileService.hasCSVFormat(file)) {
-            fileService.processAndSaveData(file);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(file.getOriginalFilename() + "Successfully Uploaded"));
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("inpuFile")MultipartFile inputFile, @RequestParam("reference")MultipartFile refFile) {
+        if(fileService.hasCSVFormat(inputFile) && fileService.hasCSVFormat(refFile)) {
+            fileService.processAndSaveData(inputFile, refFile);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(inputFile.getOriginalFilename() + " and " + refFile.getOriginalFilename() + " Successfully Uploaded"));
         }
         return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failed"));
     }
