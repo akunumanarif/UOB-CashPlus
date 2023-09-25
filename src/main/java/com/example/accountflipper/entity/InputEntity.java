@@ -24,9 +24,12 @@ public class InputEntity {
 
     private Boolean isFlipped;
 
-    public InputEntity(String inputRowValue, Long accountNumber, String amount, Boolean isFlipped) {
+    private int feeCharge;
+
+    public InputEntity(String inputRowValue, Long accountNumber, String amount, Boolean isFlipped, int feeCharge) {
         this.accountNumber = accountNumber;
         this.amount = amount;
         this.isFlipped = isFlipped;
+        this.feeCharge = feeCharge;
     }
 }

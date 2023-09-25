@@ -28,7 +28,6 @@ public class FileServiceImpl implements FileService {
         String type = "text/csv";
         return type.equals(file.getContentType());
     }
-
     @Override
     public void processAndSaveData(MultipartFile inputFile, MultipartFile refFile) {
         try {
@@ -45,6 +44,8 @@ public class FileServiceImpl implements FileService {
         List<String> inputRows = readCSVRows(inputFile);
 //        System.out.println(inputRows);
         List<String> refRows = readCSVRows(refFile);
+
+        int feeCharge = 12500;
 
         for (int i = 0; i < inputRows.size(); i++) {
             String[] inputRowValues = inputRows.get(i).split(",");
@@ -71,11 +72,11 @@ public class FileServiceImpl implements FileService {
 
                     }
                     amountL = Long.parseLong(amountFinal.trim());
-                    InputEntity inputEntity = new InputEntity(inputRowValues[1], amountL, InputAmountResult, true);
+                    InputEntity inputEntity = new InputEntity(inputRowValues[1], amountL, InputAmountResult, true, feeCharge);
                     inputEntities.add(inputEntity);
                 } else {
                     // If account numbers don't match, use the original account number
-                    InputEntity inputEntity = new InputEntity(inputRowValues[0], inputAN, InputAmountResult, false);
+                    InputEntity inputEntity = new InputEntity(inputRowValues[0], inputAN, InputAmountResult, false, feeCharge);
                     inputEntities.add(inputEntity);
                 }
             }
