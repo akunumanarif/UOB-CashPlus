@@ -21,10 +21,9 @@ public class MandiriTemplate {
                 String[] parts = line.split(";");
                 if (parts.length >= 3) {
                     String oldAccountNumber = parts[2].trim(); // Extracting old account number
-                    System.out.println("Old account Number is : " + oldAccountNumber);
                     String newAccountNumber = parts[11].trim(); // Extracting new account number
-                    System.out.println("New account Number is : " + newAccountNumber);
                     accountNumberMap.put(oldAccountNumber, newAccountNumber);
+//                    System.out.println("This is acMAP : ++++++ " + accountNumberMap);
                 }
             }
         } catch (IOException e) {
@@ -37,25 +36,36 @@ public class MandiriTemplate {
 
         try (BufferedReader br = new BufferedReader(new FileReader(mandiriInput))) {
             String line;
-            Pattern pattern = Pattern.compile(":86:.{11}(\\d{16})");
 
             while ((line = br.readLine()) != null) {
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
-                    String extractedAccountNumber = matcher.group(1);
+                if (line.startsWith(":86:")) {
+                    String extractedAccountNumber = extractAccountNumber(line);
                     String newAccountNumber = accountNumberMap.get(extractedAccountNumber);
                     if (newAccountNumber != null) {
-                        line = line.replace(extractedAccountNumber, newAccountNumber);
-                        System.out.println("Updated line: " + line);
+                        // Replace old account number with new account number
+                        String updatedLine = line.replace(extractedAccountNumber, newAccountNumber);
+                        System.out.println(updatedLine);
                     } else {
-                        System.out.println("No update for account number: " + extractedAccountNumber);
+                        // Print the original :86: line if no update for account number
+                        System.out.println(line);
                     }
+                } else {
+                    // Print other lines as is
+                    System.out.println(line);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+    private String extractAccountNumber(String line) {
+        // Assuming the account number is the 15th character onwards in the :86: line
+        return line.substring(15, 31).trim();
+    }
+
+
 
     public static void main(String[] args) {
         MandiriTemplate mandiriTemplate = new MandiriTemplate();
