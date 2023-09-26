@@ -22,18 +22,23 @@ public class MandiriTemplateController {
     private MandiriTemplateService mandiriTemplateService;
 
     @PostMapping("/process")
-    public ResponseEntity<?> processTemplate(
+    public ResponseEntity<String> processTemplate(
             @RequestParam("mandiriFile") MultipartFile mandiriFile,
-            @RequestParam("staticDataFile") MultipartFile staticDataFile) {
+            @RequestParam("staticDataFile") MultipartFile staticDataFile,
+            @RequestParam("oldAccountNumberPosition") int oldAccountNumberPosition,
+            @RequestParam("newAccountNumberPosition") int newAccountNumberPosition,
+            @RequestParam("lineSubstringStart") int lineSubstringStart,
+            @RequestParam("lineSubstringEnd") int lineSubstringEnd) {
+
         try {
-            String resultFilePath = mandiriTemplateService.processTemplate(mandiriFile, staticDataFile);
+            String resultFilePath = mandiriTemplateService.processTemplate(
+                    mandiriFile, staticDataFile,
+                    oldAccountNumberPosition, newAccountNumberPosition,
+                    lineSubstringStart, lineSubstringEnd);
 
-            // Create a downloadable URL for the result file
-            String downloadUrl = "/api/mandiri/download/" + resultFilePath;
-
-            return ResponseEntity.status(HttpStatus.OK).body(downloadUrl);
+            return ResponseEntity.ok(resultFilePath);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing the template: " + e.getMessage());
         }
     }
 
