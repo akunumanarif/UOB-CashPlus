@@ -32,7 +32,7 @@ public class MandiriTemplate {
         loadStaticData();
 
         try (BufferedReader br = new BufferedReader(new FileReader(mandiriInput));
-             BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))) {
+             BufferedWriter bw = new BufferedWriter(new FileWriter("result.txt"))) {
 
             String line;
 
