@@ -31,7 +31,7 @@ public class MandiriTemplateService {
         String outputFileName = "output_mandiri_" + formatter.format(date) + ".txt";
         Path outputPath = Paths.get("output_dir/" + outputFileName);
 
-        int totalRecords = accountNumberMap.size();
+
         int flippedAccounts = 0;
         int nonFlippedAccounts = -1;
 
@@ -64,7 +64,7 @@ public class MandiriTemplateService {
                 }
             }
         }
-
+        int totalRecords = flippedAccounts + nonFlippedAccounts;
         // Construct the response
         Map<String, Object> response = new HashMap<>();
         response.put("outputUrl", "localhost:8081/api/mandiri/download/" + outputFileName);

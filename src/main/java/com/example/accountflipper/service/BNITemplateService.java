@@ -3,6 +3,8 @@ package com.example.accountflipper.service;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,41 +28,40 @@ public class BNITemplateService {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date date = new Date();
-        String outputFileName = "output_bni_" + formatter.format(date) + ".txt";
+        String outputFileName = "output_bni_" + formatter.format(date) + ".csv";
         Path outputPath = Paths.get("output_dir/" + outputFileName);
 
-        int totalRecords = accountNumberMap.size();
         int flippedAccounts = 0;
-        int nonFlippedAccounts = -1;
+        int nonFlippedAccounts = 0;
+
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(bniFile.getInputStream()));
-             FileWriter bw = new FileWriter(outputPath.toFile());
-
-             ) {
+             FileWriter fw = new FileWriter(outputPath.toFile())) {
 
             String line;
             while ((line = br.readLine()) != null) {
-//                System.out.println("Line read: " + line.trim());
                 if (line.trim().startsWith("\"2;")) {
                     String extractedAccountNumber = extractAccountNumber(line, accountNumberPosition);
                     String newAccountNumber = accountNumberMap.get(extractedAccountNumber);
                     if (newAccountNumber != null) {
                         flippedAccounts++;
                         // Replace old account number with new account number
-                        String updatedLine = line.replace(extractedAccountNumber, newAccountNumber);
-                        bw.write(updatedLine + "\n");
+                        String[] updatedLineArray = line.split(";");
+                        updatedLineArray[accountNumberPosition] = newAccountNumber;
+                        fw.write(String.join(";", updatedLineArray) + "\n");
                     } else {
                         nonFlippedAccounts++;
                         // Keep the original line if no update for account number
-                        bw.write(line + "\n");
+                        fw.write(line + "\n");
                     }
                 } else {
                     // Keep other lines as is
-                    bw.write(line + "\n");
+                    fw.write(line + "\n");
                 }
             }
         }
 
+        int totalRecords = flippedAccounts + nonFlippedAccounts;
         // Construct the response
         Map<String, Object> response = new HashMap<>();
         response.put("outputUrl", "URL to download the output file");
