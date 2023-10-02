@@ -1,9 +1,9 @@
 package com.example.accountflipper.controller;
 
+import com.example.accountflipper.service.BNITemplateService;
 import com.example.accountflipper.service.MandiriTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +17,25 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/mandiri")
-public class MandiriTemplateController {
+@RequestMapping("/api/bni")
+public class BNITemplateController {
 
     @Autowired
-    private MandiriTemplateService mandiriTemplateService;
+    private BNITemplateService bniTemplateService;
 
     @PostMapping("/process")
     public ResponseEntity<Map<String, Object>> processTemplate(
-            @RequestParam("mandiriFile") MultipartFile mandiriFile,
+            @RequestParam("bniFile") MultipartFile bniFile,
             @RequestParam("staticDataFile") MultipartFile staticDataFile,
             @RequestParam("oldAccountNumberPosition") int oldAccountNumberPosition,
             @RequestParam("newAccountNumberPosition") int newAccountNumberPosition,
-            @RequestParam("lineSubstringStart") int lineSubstringStart,
-            @RequestParam("lineSubstringEnd") int lineSubstringEnd
+            @RequestParam("accountNumberPosition") int accountNumberPosition
     ) {
         try {
-            Map<String, Object> response = mandiriTemplateService.processTemplate(
-                    mandiriFile, staticDataFile,
+            Map<String, Object> response = bniTemplateService.processTemplate(
+                    bniFile, staticDataFile,
                     oldAccountNumberPosition, newAccountNumberPosition,
-                    lineSubstringStart, lineSubstringEnd
+                    accountNumberPosition
             );
             return ResponseEntity.ok(response);
         } catch (IOException e) {
